@@ -37,7 +37,7 @@ class Product(models.Model):
 
 class PriceHistory(models.Model):
     product = models.ForeignKey(Product, null=False, on_delete=models.CASCADE)
-    price = models.DecimalField(null=False, max_digits=8, decimal_places=0)
+    price = models.IntegerField(null=False)
     date_created = models.DateTimeField(auto_now_add=True, null=False)
 
 

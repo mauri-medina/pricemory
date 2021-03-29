@@ -1,0 +1,89 @@
+{% extends 'product/base.html' %}
+
+{% block libs %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div style="width: 75%">
+        <canvas id="myChart" width="947" height="473"></canvas>
+    </div>
+    <script>
+        const chartColors = [
+            'rgb(255,99,132)',          // red
+            'rgb(54, 162, 235)',        // blue
+            'rgb(75, 192, 192)',        // green
+            'rgb(255, 159, 64)',        // orange
+            'rgb(255, 205, 86)',        // yellow
+            'rgb(153, 102, 255)',       // purple
+            'rgb(201, 203, 207)',       // grey
+        ]
+
+        function parseResponse(response) {
+            return response.map((product, index) => {
+                let color = chartColors[index % chartColors.length]
+                return {
+                    label: product.name,
+                    borderColor: color,
+                    backgroundColor: color,
+                    fill: false,
+                    data: product.price_history.map(price => {
+                        return {
+                            x: Date.parse(price.date),
+                            y: price.price,
+                        }
+                    })
+                }
+            })
+        }
+
+        let endpoint = 'api/chart-data'
+        let query_param = {{ chart_query_params|safe }};
+
+        $.ajax({
+            method: 'GET',
+            url: endpoint,
+            data: query_param,
+            traditional: true,
+            success: function (response) {
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: parseResponse(response)
+                    },
+                    options: {
+                        responsive: true,
+                        title: {
+                            text: 'Historial de precios'
+                        },
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    unit: 'day',
+                                    displayFormats: {
+                                        day: 'DD/MM/YY'
+                                    },
+                                    tooltipFormat: 'DD/MM/YY HH:mm'
+                                },
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Precio'
+                                }
+                            }]
+                        },
+                    }
+                });
+            },
+            error: function (response) {
+                console.log('Error');
+                console.log(response);
+            }
+        })
+    </script>
+{% endblock %}
