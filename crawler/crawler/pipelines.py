@@ -38,7 +38,7 @@ class DataBasePipeline:
     def process_item(self, item, spider):
         spider.logger.debug('at process_item::process_item item=%s', item)
 
-        product_price = item.get('price')
+        product_price = int(item.get('price'))
         product_url = item.get('url')
         product_name = item.get('name')
 
