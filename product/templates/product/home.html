@@ -1,0 +1,378 @@
+{% extends 'product/base.html' %}
+
+{% block libs %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <!-- < Search Form > -->
+        <div class="columns">
+            <div class="column"></div>
+            <form method="get" action="" id="search-form" class="box column is-three-fifths">
+                <div class="columns">
+                    <div class="column"></div>
+                    <div class="column is-four-fifths">
+
+                        <div class="field">
+                            <label class="label">Nombre</label>
+                            <div class="control">{{ myFilter.form.name }}</div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">URL</label>
+                            <div class="control">{{ myFilter.form.url }}</div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Codigo de Barras</label>
+                            <div class="control">{{ myFilter.form.barcode }}</div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                            <div class="field-body">
+
+                                <div class="field">
+                                    <label class="label">Tienda</label>
+                                    <div class="control">
+                                        <div class="select">{{ myFilter.form.shop }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">Marca</label>
+                                    <div class="control">
+                                        <div class="select">{{ myFilter.form.brand }}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped is-grouped-centered mt-6">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Buscar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="column"></div>
+                </div>
+            </form>
+            <div class="column"></div>
+        </div>
+        <!-- </ Search Form > -->
+
+        <!-- < Results Table > -->
+        <div class="box">
+
+            <table class="table is-striped">
+                <thead>
+                <tr>
+                    <th class="has-text-centered">Codigo de Barras</th>
+                    <th class="has-text-centered" sort-name="name">Nombre</th>
+                    <th class="has-text-centered">Tienda</th>
+                    <th class="has-text-centered">Marca</th>
+                    <th class="has-text-centered">URL</th>
+                    <th class="sortable" sort-name="num_prices">Variaciones de Precio</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td class="has-text-centered">{{ product.barcode|default_if_none:"-" }}</td>
+                        <td>{{ product.name }}</td>
+                        <td class="has-text-centered">{{ product.shop.name }}</td>
+                        <td class="has-text-centered">{% if product.brand %} {{ product.brand.name }} {% else %} -  {% endif %}</td>
+                        <td class="has-text-centered"><a href="{{ product.url }}">Link</a></td>
+
+                        <td class="has-text-centered">
+                            <a class="button button is-info" href="{% url 'chart' %}?product_id={{ product.id }}">
+                                <span>{{ product.num_prices }}</span>
+                                <span class="icon is-small">
+                                    <i class="fas fa-chart-line"></i>
+                                </span>
+                            </a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {% if products %}
+                <!--Pagination -->
+                <!-- Adapted from https://www.ordinarycoders.com/blog/article/django-pagination -->
+
+                <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+
+
+                    <ul class="pagination-list">
+                        <a class="pagination-link"
+                                {% if products.has_previous %}
+                           href="?{{ parameters }}&page={{ products.previous_page_number }}"
+                                {% else %}
+                           title="This is the first page" disabled
+                                {% endif %}
+                        >
+                            Anterior
+                        </a>
+
+                        {% if products.number|add:'-2' > 1 %}
+                            <li><a class="pagination-link" aria-label="Goto page 1"
+                                   href="?page=1&{{ parameters }}">1</a>
+                            </li>
+                            <li><a class="pagination-ellipsis"
+                                   href="?{{ parameters }}&page={{ products.number|add:'-3' }}">&hellip;</a>
+                            </li>
+                        {% endif %}
+
+
+                        {% for page in products.paginator.page_range %}
+                            {% if products.number == page %}
+                                <li><a class="pagination-link is-current" aria-label="Page {{ page }}"
+                                       aria-current="page">{{ page }}</a></li>
+                            {% elif page > products.number|add:'-3' and page < products.number|add:'3' %}
+                                <li><a class="pagination-link" aria-label="Goto page {{ page }}"
+                                       href="?{{ parameters }}&page={{ page }}">{{ page }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+
+                        {% if products.paginator.num_pages > products.number|add:'2' %}
+                            <li><a class="pagination-ellipsis"
+                                   href="?{{ parameters }}&page={{ products.number|add:'3' }}">&hellip;</a>
+                            </li>
+
+
+                            <li>
+                                <a class="pagination-link" aria-label="Goto page 1"
+                                   href="?{{ parameters }}&page={{ products.paginator.num_pages }}"
+                                >
+                                    {{ products.paginator.num_pages }}
+                                </a>
+                            </li>
+
+
+                        {% endif %}
+
+                        <a class="pagination-link"
+                                {% if products.has_next %}
+                           href="?{{ parameters }}&page={{ products.next_page_number }}"
+                                {% else %}
+                           title="This is the last page" disabled
+                                {% endif %}
+                        >
+                            Siguiente
+                        </a>
+
+                    </ul>
+                </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                {% comment %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+
+                {% if products.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% if products.number|add:'-2' > 1 %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page=1">1</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ products.number|add:'-3' }}">&hellip;</a>
+                    </li>
+
+
+                {% endif %}
+
+                {% for i in products.paginator.page_range %}
+                    {% if products.number == i %}
+                        <li class="page-item active" aria-current="page">
+                          <span class="page-link">
+                            {{ i }}
+                            <span class="sr-only">(current)</span>
+                          </span>
+                        </li>
+                    {% elif i > products.number|add:'-3' and i < products.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if products.paginator.num_pages > products.number|add:'2' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ products.number|add:'3' }}">&hellip;</a>
+                    </li>
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ products.paginator.num_pages }}">{{ products.paginator.num_pages }}</a>
+                    </li>
+
+                {% endif %}
+
+                {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ products.next_page_number }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+{% endcomment %}
+                <!--end of Pagination-->
+            {% endif %}
+
+
+
+            <script>
+                $(document).ready(function () {
+                    // -----------------------------------------------
+                    // Sortable table columns
+                    // -----------------------------------------------
+                    const urlParams = new URLSearchParams(window.location.search);
+
+                    $('.sortable').each(function () {
+                        let element = $(this)
+
+                        let sortName = element.attr('sort-name');
+
+                        let sortTypeParamKey = 'sort-' + sortName;
+                        let sortType = urlParams.get(sortTypeParamKey);
+
+                        let iconName = 'fa-sort';
+                        if (sortType === 'asc')
+                            iconName = 'fa-sort-up'
+                        else if (sortType === 'desc')
+                            iconName = 'fa-sort-down'
+
+                        element.append(`<span class="icon has-text-warning"><i class="fas ` + iconName + `"></i></span> `)
+
+                        element.click(function () {
+
+                            // sort order is none -> asc -> desc -> none
+                            if (sortType === 'asc')
+                                urlParams.set(sortTypeParamKey, 'desc');
+                            else if (sortType === 'desc')
+                                urlParams.delete(sortTypeParamKey);
+                            else
+                                urlParams.set(sortTypeParamKey, 'asc');
+
+
+                            window.location.search = urlParams.toString();
+                        })
+                    });
+                });
+
+
+                {% comment %}
+                $('.sortable').each(function () {
+                        let element = $(this)
+
+                        let sortName = element.attr('sort-name');
+
+                        let sortTypeParamKey = sortName + '-sort';
+                        let sortType = urlParams.get(sortTypeParamKey);
+
+                        let iconName = 'fa-sort';
+                        if (sortType === 'asc')
+                            iconName = 'fa-sort-up'
+                        else if (sortType === 'desc')
+                            iconName = 'fa-sort-down'
+
+                        element.append(`<span class="icon has-text-warning"><i class="fas ` + iconName + `"></i></span> `)
+
+                        element.click(function () {
+
+                            // sort order is none -> asc -> desc -> none
+                            if (sortType === 'asc') {
+                                // sort-name already in urlParams, was added when set to asc
+                                urlParams.set(sortTypeParamKey, 'desc');
+
+                            } else if (sortType === 'desc') {
+                                urlParams.delete(sortTypeParamKey);
+
+                                // remove this sort name from the sorts list
+                                let currentSorts = urlParams.getAll('sort-by')
+                                let index = currentSorts.indexOf(sortName)
+                                currentSorts.splice(index, 1)
+
+                                urlParams.delete('sort-by');
+                                currentSorts.forEach(s => urlParams.append('sort-by', s));
+
+                            } else {
+                                urlParams.set(sortTypeParamKey, 'asc');
+
+                                // append new sort-name, append because it can exist more than one sort at the time
+                                urlParams.append('sort-by', sortName);
+                            }
+
+                            window.location.search = urlParams.toString();
+                        })
+                    });
+                });
+        {% endcomment %}
+            </script>
+        </div>
+        <!-- </ Results Table > -->
+
+    </div>
+
+{% endblock %}
+
+

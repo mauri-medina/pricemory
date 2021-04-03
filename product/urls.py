@@ -18,6 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.price_history_chart, name='char_test'),
-    path('api/chart-data', views.api_chart_data),
+    path('', views.search, name='home'),
+    path('chart/', views.price_history_chart, name='chart'),
+    path('api/chart-data/', views.api_chart_data, name='api-chart'),
 ]

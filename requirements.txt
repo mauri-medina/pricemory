@@ -6,6 +6,7 @@ constantly==15.1.0
 cryptography==3.4.6
 cssselect==1.1.0
 Django==3.1.7
+django-filter==2.4.0
 hyperlink==21.0.0
 idna==3.1
 incremental==21.3.0

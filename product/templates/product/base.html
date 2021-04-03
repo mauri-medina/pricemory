@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
 
+    <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/2bf0964eb7.js" crossorigin="anonymous"></script>
 
     {% block libs %}
 
@@ -16,13 +22,25 @@
     {% endblock %}
     <title>Pricemory</title>
 </head>
-<body>
+
+{# TODO move color to style#}
+<body style="background-color: #efefef;">
 
 <h2>BASE TEMPLATE</h2>
 
 {% block content %}
 
 {% endblock %}
+
+{# TODO move to it's own template #}
+<footer class="footer columns" style="padding: 1rem">
+    <div class="column is-4 is-offset-8 is-size-7 has-text-right-desktop is-family-monospace">
+        Desarrollado por Mauricio Medina
+        <br> Código fuente libre bajo licencia <a href="https://opensource.org/licenses/GPL-3.0">GPLv3</a>
+        <br><a href="https://github.com/mauri-medina/pricemory" target="_blank" rel="noopener noreferrer">Revisá el
+        código<span class="icon"><i class="fab fa-github" title="logo Github"></i></span></a>
+    </div>
+</footer>
 
 {#  SCRIPTS #}
 {% block scripts %}

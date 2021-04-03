@@ -1,10 +1,13 @@
 import random
 from datetime import datetime, timedelta
 
+from django.core.paginator import Paginator
+from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
+from product.filters import ProductFilter
 from product.models import *
 
 
@@ -82,3 +85,50 @@ def api_chart_data(request):
         data=response,
         safe=False,
     )
+
+
+def search(request):
+    products = None
+    search_parameters = None
+    product_filter = ProductFilter(request.GET)
+
+    if request.GET:  # does the call have a search or page param?
+        # -- FILTERING
+        products = Product.objects.all()
+        product_filter = ProductFilter(request.GET, queryset=products)
+
+        products = product_filter.qs.annotate(num_prices=Count('pricehistory'))
+
+        # -- ORDER
+        order_by = []
+        for key, value in request.GET.items():
+            if 'sort-' in key:
+                column = key.replace('sort-', '')
+                order_type = ''
+                if value == 'asc':
+                    order_type = '-'
+
+                order_by.append(order_type + column)
+
+        order_by.append('name')  # always order by name by default
+        products = products.order_by(*order_by)
+
+        # -- PAGINATION
+        # page_number = request.GET.get('page', 1)
+        get_copy = request.GET.copy()
+        page_number = int(get_copy.pop('page', ['1'])[0])
+        items_per_page = 20
+
+        paginator = Paginator(products, items_per_page)
+        products = paginator.page(page_number)
+
+        # search_parameters = request.GET.copy().urlencode()
+        search_parameters = get_copy.urlencode()  # get all params without page
+
+    context = {
+        'products': products,
+        'myFilter': product_filter,
+        'parameters': search_parameters,
+    }
+
+    return render(request, 'product/home.html', context=context)

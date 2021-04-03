@@ -39,8 +39,9 @@
             })
         }
 
-        let endpoint = 'api/chart-data'
+        let endpoint = '{% url 'api-chart' %}'
         let query_param = {{ chart_query_params|safe }};
+        console.log(query_param)
 
         $.ajax({
             method: 'GET',
