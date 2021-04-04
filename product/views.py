@@ -125,8 +125,9 @@ def home(request):
 
     products_count = Product.objects.count()
 
-    since_date = PriceHistory.objects.earliest('date_created')
-    since_date = since_date.date_created if since_date else None
+    since_date = None
+    if PriceHistory.objects.exists():
+        since_date = PriceHistory.objects.earliest('date_created').date_created
 
     context = {
         'products': products,

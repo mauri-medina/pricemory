@@ -5,7 +5,10 @@ from django.db import models
 
 class Brand(models.Model):
     name = models.CharField(max_length=200, null=False, unique=True)
-    date_created = models.DateTimeField(auto_now_add=True, null=False)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        db_table = 'brand'
 
     def __str__(self):
         return self.name
@@ -15,7 +18,10 @@ class Shop(models.Model):
     name = models.CharField(max_length=200, null=False, unique=True)
     url = models.CharField(max_length=400, null=False)
     description = models.CharField(max_length=400, null=True)
-    date_created = models.DateTimeField(auto_now_add=True, null=False)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        db_table = 'shop'
 
     def __str__(self):
         return self.name
@@ -29,7 +35,10 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, null=True, on_delete=models.SET_NULL)
     url = models.CharField(max_length=400, null=False, unique=True)
     image_url = models.CharField(max_length=400, null=True)
-    date_created = models.DateTimeField(auto_now_add=True, null=False)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        db_table = 'product'
 
     def __str__(self):
         return self.name
@@ -40,8 +49,5 @@ class PriceHistory(models.Model):
     price = models.IntegerField(null=False)
     date_created = models.DateTimeField(auto_now_add=True, null=False)
 
-
-
-
-
-
+    class Meta:
+        db_table = 'price_history'
