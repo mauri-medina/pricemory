@@ -120,6 +120,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/images/'
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
 
 # django_filters
 # https://django-filter.readthedocs.io/en/stable/ref/settings.html

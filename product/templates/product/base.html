@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="es">
+
+{# TODO move color to style#}
+<html lang="es" style="background-color: #fafafa;">
 <head>
     <meta charset="UTF-8">
 
@@ -23,24 +25,15 @@
     <title>Pricemory</title>
 </head>
 
-{# TODO move color to style#}
-<body style="background-color: #efefef;">
+<body>
 
-<h2>BASE TEMPLATE</h2>
+{% include 'product/header.html' %}
 
 {% block content %}
 
 {% endblock %}
 
-{# TODO move to it's own template #}
-<footer class="footer columns" style="padding: 1rem">
-    <div class="column is-4 is-offset-8 is-size-7 has-text-right-desktop is-family-monospace">
-        Desarrollado por Mauricio Medina
-        <br> Código fuente libre bajo licencia <a href="https://opensource.org/licenses/GPL-3.0">GPLv3</a>
-        <br><a href="https://github.com/mauri-medina/pricemory" target="_blank" rel="noopener noreferrer">Revisá el
-        código<span class="icon"><i class="fab fa-github" title="logo Github"></i></span></a>
-    </div>
-</footer>
+{% include 'product/footer.html' %}
 
 {#  SCRIPTS #}
 {% block scripts %}

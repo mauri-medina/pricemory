@@ -87,12 +87,12 @@ def api_chart_data(request):
     )
 
 
-def search(request):
+def home(request):
     products = None
     search_parameters = None
     product_filter = ProductFilter(request.GET)
 
-    if request.GET:  # does the call have a search or page param?
+    if request.GET:  # enter if there is any query param
         # -- FILTERING
         products = Product.objects.all()
         product_filter = ProductFilter(request.GET, queryset=products)
@@ -114,7 +114,6 @@ def search(request):
         products = products.order_by(*order_by)
 
         # -- PAGINATION
-        # page_number = request.GET.get('page', 1)
         get_copy = request.GET.copy()
         page_number = int(get_copy.pop('page', ['1'])[0])
         items_per_page = 20
@@ -122,11 +121,17 @@ def search(request):
         paginator = Paginator(products, items_per_page)
         products = paginator.page(page_number)
 
-        # search_parameters = request.GET.copy().urlencode()
         search_parameters = get_copy.urlencode()  # get all params without page
+
+    products_count = Product.objects.count()
+
+    since_date = PriceHistory.objects.earliest('date_created')
+    since_date = since_date.date_created if since_date else None
 
     context = {
         'products': products,
+        'productsCount': products_count,
+        'sinceDate': since_date,
         'myFilter': product_filter,
         'parameters': search_parameters,
     }

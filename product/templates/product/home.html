@@ -1,4 +1,13 @@
 {% extends 'product/base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/home.js' %}"></script>
+{% endblock %}
 
 {% block libs %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
@@ -10,9 +19,18 @@
 
     <div class="container">
 
+        <div class="columns has-text-centered mb-5">
+            <div class="column is-12">
+
+                <h1 class="title">Historial de precios de Tiendas Paraguayas</h1>
+                <h1 class="subtitle">{{ productsCount }} productos registrados desde el {{ sinceDate.year }}</h1>
+            </div>
+        </div>
+
         <!-- < Search Form > -->
         <div class="columns">
             <div class="column"></div>
+
             <form method="get" action="" id="search-form" class="box column is-three-fifths">
                 <div class="columns">
                     <div class="column"></div>
@@ -55,7 +73,7 @@
 
                         <div class="field is-grouped is-grouped-centered mt-6">
                             <div class="control">
-                                <button type="submit" class="button is-primary">Buscar</button>
+                                <button type="submit" class="button is-info">Buscar</button>
                             </div>
                         </div>
 
@@ -68,49 +86,54 @@
         <!-- </ Search Form > -->
 
         <!-- < Results Table > -->
-        <div class="box">
+        {% if products %}
+            <div class="box">
 
-            <table class="table is-striped">
-                <thead>
-                <tr>
-                    <th class="has-text-centered">Codigo de Barras</th>
-                    <th class="has-text-centered" sort-name="name">Nombre</th>
-                    <th class="has-text-centered">Tienda</th>
-                    <th class="has-text-centered">Marca</th>
-                    <th class="has-text-centered">URL</th>
-                    <th class="sortable" sort-name="num_prices">Variaciones de Precio</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for product in products %}
+                <table class="table is-striped">
+                    <thead>
                     <tr>
-                        <td class="has-text-centered">{{ product.barcode|default_if_none:"-" }}</td>
-                        <td>{{ product.name }}</td>
-                        <td class="has-text-centered">{{ product.shop.name }}</td>
-                        <td class="has-text-centered">{% if product.brand %} {{ product.brand.name }} {% else %} -  {% endif %}</td>
-                        <td class="has-text-centered"><a href="{{ product.url }}">Link</a></td>
-
-                        <td class="has-text-centered">
-                            <a class="button button is-info" href="{% url 'chart' %}?product_id={{ product.id }}">
-                                <span>{{ product.num_prices }}</span>
-                                <span class="icon is-small">
-                                    <i class="fas fa-chart-line"></i>
-                                </span>
-                            </a>
-                        </td>
-
+                        <th class="has-text-centered">Codigo de Barras</th>
+                        <th class="has-text-centered">Nombre</th>
+                        <th class="has-text-centered">Tienda</th>
+                        <th class="has-text-centered">Marca</th>
+                        <th class="has-text-centered">URL</th>
+                        <th class="sortable" sortable="num_prices">Historial de Precio</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td class="has-text-centered">{{ product.barcode|default_if_none:"-" }}</td>
+                            <td>{{ product.name }}</td>
+                            <td class="has-text-centered">{{ product.shop.name }}</td>
+                            <td class="has-text-centered">
+                                {% if product.brand %} {{ product.brand.name }} {% else %}-{% endif %}
+                            </td>
 
-            {% if products %}
+                            <td>
+                                <a class="button button is-link"
+                                   href="{{ product.url }}" target="_blank">
+                                    <span class="icon is-small"><i class="fas fa-external-link-alt"></i></span>
+                                </a>
+                            </td>
+
+
+                            <td class="has-text-centered">
+                                <a class="button button is-primary"
+                                   href="{% url 'chart' %}?product_id={{ product.id }}">
+                                    <span>{{ product.num_prices }}</span>
+                                    <span class="icon is-small"><i class="fas fa-chart-line"></i></span>
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
                 <!--Pagination -->
                 <!-- Adapted from https://www.ordinarycoders.com/blog/article/django-pagination -->
-
-                <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-
-
+                <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
                     <ul class="pagination-list">
                         <a class="pagination-link"
                                 {% if products.has_previous %}
@@ -156,8 +179,6 @@
                                     {{ products.paginator.num_pages }}
                                 </a>
                             </li>
-
-
                         {% endif %}
 
                         <a class="pagination-link"
@@ -172,204 +193,10 @@
 
                     </ul>
                 </nav>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                {% comment %}
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-
-                {% if products.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                    </li>
-                {% endif %}
-
-                {% if products.number|add:'-2' > 1 %}
-                    <li class="page-item"><a class="page-link"
-                                             href="?page=1">1</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="?page={{ products.number|add:'-3' }}">&hellip;</a>
-                    </li>
-
-
-                {% endif %}
-
-                {% for i in products.paginator.page_range %}
-                    {% if products.number == i %}
-                        <li class="page-item active" aria-current="page">
-                          <span class="page-link">
-                            {{ i }}
-                            <span class="sr-only">(current)</span>
-                          </span>
-                        </li>
-                    {% elif i > products.number|add:'-3' and i < products.number|add:'3' %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
-
-                {% if products.paginator.num_pages > products.number|add:'2' %}
-                    <li class="page-item"><a class="page-link" href="?page={{ products.number|add:'3' }}">&hellip;</a>
-                    </li>
-                    <li class="page-item"><a class="page-link"
-                                             href="?page={{ products.paginator.num_pages }}">{{ products.paginator.num_pages }}</a>
-                    </li>
-
-                {% endif %}
-
-                {% if products.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}">Next</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-{% endcomment %}
                 <!--end of Pagination-->
-            {% endif %}
-
-
-
-            <script>
-                $(document).ready(function () {
-                    // -----------------------------------------------
-                    // Sortable table columns
-                    // -----------------------------------------------
-                    const urlParams = new URLSearchParams(window.location.search);
-
-                    $('.sortable').each(function () {
-                        let element = $(this)
-
-                        let sortName = element.attr('sort-name');
-
-                        let sortTypeParamKey = 'sort-' + sortName;
-                        let sortType = urlParams.get(sortTypeParamKey);
-
-                        let iconName = 'fa-sort';
-                        if (sortType === 'asc')
-                            iconName = 'fa-sort-up'
-                        else if (sortType === 'desc')
-                            iconName = 'fa-sort-down'
-
-                        element.append(`<span class="icon has-text-warning"><i class="fas ` + iconName + `"></i></span> `)
-
-                        element.click(function () {
-
-                            // sort order is none -> asc -> desc -> none
-                            if (sortType === 'asc')
-                                urlParams.set(sortTypeParamKey, 'desc');
-                            else if (sortType === 'desc')
-                                urlParams.delete(sortTypeParamKey);
-                            else
-                                urlParams.set(sortTypeParamKey, 'asc');
-
-
-                            window.location.search = urlParams.toString();
-                        })
-                    });
-                });
-
-
-                {% comment %}
-                $('.sortable').each(function () {
-                        let element = $(this)
-
-                        let sortName = element.attr('sort-name');
-
-                        let sortTypeParamKey = sortName + '-sort';
-                        let sortType = urlParams.get(sortTypeParamKey);
-
-                        let iconName = 'fa-sort';
-                        if (sortType === 'asc')
-                            iconName = 'fa-sort-up'
-                        else if (sortType === 'desc')
-                            iconName = 'fa-sort-down'
-
-                        element.append(`<span class="icon has-text-warning"><i class="fas ` + iconName + `"></i></span> `)
-
-                        element.click(function () {
-
-                            // sort order is none -> asc -> desc -> none
-                            if (sortType === 'asc') {
-                                // sort-name already in urlParams, was added when set to asc
-                                urlParams.set(sortTypeParamKey, 'desc');
-
-                            } else if (sortType === 'desc') {
-                                urlParams.delete(sortTypeParamKey);
-
-                                // remove this sort name from the sorts list
-                                let currentSorts = urlParams.getAll('sort-by')
-                                let index = currentSorts.indexOf(sortName)
-                                currentSorts.splice(index, 1)
-
-                                urlParams.delete('sort-by');
-                                currentSorts.forEach(s => urlParams.append('sort-by', s));
-
-                            } else {
-                                urlParams.set(sortTypeParamKey, 'asc');
-
-                                // append new sort-name, append because it can exist more than one sort at the time
-                                urlParams.append('sort-by', sortName);
-                            }
-
-                            window.location.search = urlParams.toString();
-                        })
-                    });
-                });
-        {% endcomment %}
-            </script>
-        </div>
-        <!-- </ Results Table > -->
+            </div>
+            <!-- </ Results Table > -->
+        {% endif %}
 
     </div>
 
