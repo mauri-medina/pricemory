@@ -11,6 +11,7 @@ It uses scrapy for scraping shops sites and django for web framework
 - [Casa Rica](www.casarica.com.py)
 - [Nissei](www.casanissei.com)
 - [Tupi](www.tupi.com.py)
+- [Los Jardines](www.losjardinesonline.com.py)
 
  
 ## Requirements
