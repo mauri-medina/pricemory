@@ -15,8 +15,6 @@ class NisseiSpider(scrapy.Spider):
         'SHOP_URL': 'https://www.casanissei.com/py/',
     }
 
-    last_visited_page = 1
-
     def parse(self, response):
         products = response.css('.item.product.product-item')
         if products:
@@ -57,16 +55,14 @@ class NisseiSpider(scrapy.Spider):
 
                 yield item
 
-            next_page_url = self.get_next_page_url()
-            self.logger.info("Going to next page --> {}".format(next_page_url))
-            yield scrapy.Request(url=next_page_url, callback=self.parse)
-
+            next_page = response.css('.pages-item-next a::attr(href)').get()
+            if next_page is not None:
+                self.logger.info("Going to next page --> {}".format(next_page))
+                yield response.follow(next_page, callback=self.parse)
+            else:
+                self.logger.info('Next page not found, reached last page of search')
         else:
             self.logger.info('No Products found, reached last page of search')
 
     def join_to_base_url(self, to_join):
         return urljoin('https://www.casanissei.com/', to_join)
-
-    def get_next_page_url(self) -> str:
-        self.last_visited_page += 1
-        return self.start_urls[0] + '&p=' + str(self.last_visited_page)
