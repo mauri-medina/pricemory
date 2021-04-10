@@ -6,12 +6,12 @@ Tracking and display of price history of products from Paraguay
 It uses scrapy for scraping shops sites and django for web framework
 
 ### Tracked shops
-- [Superseis](www.superseis.com.py) 
-- [Stock](www.stock.com.py)
-- [Casa Rica](www.casarica.com.py)
-- [Nissei](www.casanissei.com)
-- [Tupi](www.tupi.com.py)
-- [Los Jardines](www.losjardinesonline.com.py)
+- [Superseis](https://www.superseis.com.py) 
+- [Stock](https://www.stock.com.py)
+- [Casa Rica](https://www.casarica.com.py/)
+- [Nissei](https://www.casanissei.com)
+- [Tupi](https://www.tupi.com.py/)
+- [Los Jardines](https://losjardinesonline.com.py/)
 
  
 ## Requirements
