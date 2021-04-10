@@ -36,6 +36,7 @@ class Product(models.Model):
     url = models.CharField(max_length=400, null=False, unique=True)
     image_url = models.CharField(max_length=400, null=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
+    modified_date = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         db_table = 'product'

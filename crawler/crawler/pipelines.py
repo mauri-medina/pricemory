@@ -29,8 +29,10 @@ class DataBasePipeline:
             raise ValueError("Spider must have shop url")
 
         self.shop, created = Shop.objects.get_or_create(
-            name=shop_name,
-            url=shop_url
+            url=shop_url,
+            defaults={
+                'name': shop_name
+            }
         )
 
         spider.logger.debug('spider Shop DB instance= %s, created = %s', self.shop, created)
@@ -38,46 +40,72 @@ class DataBasePipeline:
     def process_item(self, item, spider):
         spider.logger.debug('at process_item::process_item item=%s', item)
 
-        product_price = int(item.get('price'))
-        product_url = item.get('url')
-        product_name = item.get('name')
-
-        product, created = Product.objects.get_or_create(
-            # Any keyword arguments passed to get_or_create() will be used in a get() call
-            name=product_name,
-            url=product_url
+        scrapped_product = Product(
+            url=item.get('url'),
+            name=item.get('name'),
+            barcode=item.get('barcode'),
+            image_url=item.get('image_url'),
         )
-        spider.logger.debug('Product id=%d, created=%s', product.id, created)
 
+        db_product, created = Product.objects.get_or_create(
+            # search product by url, url will always be unique and not null for a product
+            url=scrapped_product.url,
+
+            # values to insert
+            defaults={
+                'name': scrapped_product.name,
+                'barcode': scrapped_product.barcode,
+                'shop': self.shop,
+                'image_url': scrapped_product.image_url
+            }
+        )
+
+        spider.logger.debug('Product id=%d, created=%s', db_product.id, created)
+
+        if not created:
+            changed = False
+            if db_product.name != scrapped_product.name:
+                db_product.name = scrapped_product.name
+                changed = True
+
+            if db_product.image_url != scrapped_product.image_url:
+                db_product.image_url = scrapped_product.image_url
+                changed = True
+
+            # Barcode of a product cannot change but it may have been saved as null before
+            if db_product.barcode != scrapped_product.barcode:
+                db_product.barcode = scrapped_product.barcode
+                changed = True
+
+            if db_product.description != scrapped_product.description:
+                db_product.description = scrapped_product.description
+                changed = True
+
+            if changed:
+                db_product.save()
+
+        brand_name = item.get('brand')
+        if brand_name and (created or db_product.brand.name is None):
+            brand, created = Brand.objects.get_or_create(name=brand_name)
+            db_product.brand = brand
+            db_product.save()
+
+        product_price = int(item.get('price'))
         if created:
-            brand_name = item.get('brand')
-            brand = None
-            if brand_name:
-                brand, created = Brand.objects.get_or_create(
-                    name=brand_name
-                )
-
-            product.image_url = item.get('image_url')
-            product.barcode = item.get('barcode')
-            product.shop = self.shop
-            product.brand = brand
-            product.save()
-
             PriceHistory.objects.create(
-                product=product,
+                product=db_product,
                 price=product_price
             )
-
         else:
-            latest_price_history = PriceHistory.objects.filter(product=product).latest('date_created')
+            latest_price_history = PriceHistory.objects.filter(product=db_product).latest('date_created')
             if latest_price_history.price != product_price:
                 PriceHistory.objects.create(
-                    product=product,
+                    product=db_product,
                     price=product_price
                 )
             else:
                 spider.logger.debug(
                     'Price for product=%d is the same as the last register price, Price history will not be created',
-                    product.id)
+                    db_product.id)
 
         return item
