@@ -11,14 +11,21 @@ class TupiSpider(scrapy.Spider):
     start_urls = ['https://www.tupi.com.py/']
 
     custom_settings = {
-        'SHOP_NAME': 'tupi',
+        'SHOP_NAME': 'Tupi',
         'SHOP_URL': 'https://www.tupi.com.py/',
     }
 
     category_url = 'https://www.tupi.com.py/rubros_paginacion'
 
     def parse(self, response):
-        categories = response.css('.titulo_rubro a::attr(href)').getall()
+        # There are different sections with different categories links so just grab them all and filter
+        all_page_links = response.css('a::attr(href)').getall()
+        unique_links = list(set(all_page_links))
+        categories = []
+        for link in unique_links:
+            if '/rubros/' in link:
+                categories.append(link)
+
         for category in categories:
             category_url = self.get_category_next_page_url(category)
             self.logger.info("Going to category page --> {}".format(category_url))
@@ -59,6 +66,9 @@ class TupiSpider(scrapy.Spider):
             self.logger.info('No Products found, reached last page of search')
 
     def get_category_next_page_url(self, current_category_url):
+        """
+         Get the category id from the url and join it with the categories url and add the pagination
+        """
         found = re.findall(r"/(\d+)", current_category_url)
 
         category = found[0]
