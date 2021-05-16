@@ -10,7 +10,7 @@
     <div class="container">
 
         <div style="width: 100%">
-            <canvas id="myChart" ></canvas>
+            <canvas id="myChart"></canvas>
         </div>
         <script>
             const chartColors = [
@@ -22,6 +22,10 @@
                 'rgb(153,102,255)',             // purple
                 'rgb(201, 203, 207)',           // grey
             ]
+
+            function addThousandSeparator(value) {
+                return value.toLocaleString('es');
+            }
 
             function parseResponse(response) {
                 return response.map((product, index) => {
@@ -43,7 +47,6 @@
 
             let endpoint = '{% url 'api-chart' %}'
             let query_param = {{ chart_query_params|safe }};
-            console.log(query_param)
 
             $.ajax({
                 method: 'GET',
@@ -77,8 +80,23 @@
                                     scaleLabel: {
                                         display: true,
                                         labelString: 'Precio'
+                                    },
+                                    ticks: {
+                                        // Show prices with thousand separator in y axis label
+                                        callback: function (value, index, values) {
+                                            return addThousandSeparator(value);
+                                        }
                                     }
                                 }]
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    // Show product name with price when hover over data point
+                                    label: function (tooltipItems, dataset) {
+                                        console.log(tooltipItems)
+                                        return dataset.datasets[0].label + ": " + addThousandSeparator(tooltipItems.yLabel);
+                                    }
+                                }
                             },
                         }
                     });
