@@ -2,6 +2,8 @@ from django.db import models
 
 
 # Create your models here.
+from django.db.models.functions import Upper
+
 
 class Brand(models.Model):
     name = models.CharField(max_length=200, null=False, unique=True)
@@ -9,6 +11,7 @@ class Brand(models.Model):
 
     class Meta:
         db_table = 'brand'
+        ordering = [Upper('name')]
 
     def __str__(self):
         return self.name
