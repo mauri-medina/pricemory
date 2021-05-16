@@ -19,6 +19,7 @@ It uses scrapy for scraping shops sites and django for web framework
 
 - Python 3.6+
 - Django 2.2+
+- PostgreSQL 12+
 
 ## Installation
 
