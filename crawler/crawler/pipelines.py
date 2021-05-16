@@ -47,7 +47,7 @@ class DataBasePipeline:
             image_url=item.get('image_url'),
         )
 
-        db_product, created = Product.objects.get_or_create(
+        db_product, is_new_product = Product.objects.get_or_create(
             # search product by url, url will always be unique and not null for a product
             url=scrapped_product.url,
 
@@ -60,9 +60,10 @@ class DataBasePipeline:
             }
         )
 
-        spider.logger.debug('Product id=%d, created=%s', db_product.id, created)
+        spider.logger.debug('Product id=%d, is_new_product=%s', db_product.id, is_new_product)
 
-        if not created:
+        # -- Update Product
+        if not is_new_product:
             changed = False
             if db_product.name != scrapped_product.name:
                 db_product.name = scrapped_product.name
@@ -84,20 +85,18 @@ class DataBasePipeline:
             if changed:
                 db_product.save()
 
+        # -- Create/Update Product Brand
         brand_name = item.get('brand')
-        if brand_name and (created or db_product.brand.name is None):
-            brand, created = Brand.objects.get_or_create(name=brand_name)
+        if brand_name and (is_new_product or db_product.brand.name is None):
+            brand, brand_created = Brand.objects.get_or_create(name=brand_name)
             db_product.brand = brand
             db_product.save()
 
+        # -- Create/Update Price
         product_price = int(item.get('price'))
-        if created:
-            PriceHistory.objects.create(
-                product=db_product,
-                price=product_price
-            )
-        else:
-            latest_price_history = PriceHistory.objects.filter(product=db_product).latest('date_created')
+        price_history = PriceHistory.objects.filter(product=db_product)
+        if price_history.exists():
+            latest_price_history = price_history.latest('date_created')
             if latest_price_history.price != product_price:
                 PriceHistory.objects.create(
                     product=db_product,
@@ -107,5 +106,10 @@ class DataBasePipeline:
                 spider.logger.debug(
                     'Price for product=%d is the same as the last register price, Price history will not be created',
                     db_product.id)
+        else:
+            PriceHistory.objects.create(
+                product=db_product,
+                price=product_price
+            )
 
         return item
