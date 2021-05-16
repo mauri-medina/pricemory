@@ -6,7 +6,6 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
 
-# Create your views here.
 from product.filters import ProductFilter
 from product.models import *
 
@@ -91,6 +90,7 @@ def home(request):
     products = None
     search_parameters = None
     product_filter = ProductFilter(request.GET)
+    selected_for_compare = []
 
     if request.GET:  # enter if there is any query param
         # -- FILTERING
@@ -123,18 +123,30 @@ def home(request):
 
         search_parameters = get_copy.urlencode()  # get all params without page
 
-    products_count = Product.objects.count()
-
-    since_date = None
-    if PriceHistory.objects.exists():
-        since_date = PriceHistory.objects.earliest('date_created').date_created
+        # -- SELECTED FOR COMPARE
+        params = request.GET.getlist('compare')
+        if params:
+            selected_for_compare = list(map(int, params))
 
     context = {
         'products': products,
-        'productsCount': products_count,
-        'sinceDate': since_date,
         'myFilter': product_filter,
+        'statistics': get_statistics(),
         'parameters': search_parameters,
+        'selectedForCompare': selected_for_compare,
     }
 
     return render(request, 'product/home.html', context=context)
+
+
+def get_statistics():
+    last_register_date = None
+    if PriceHistory.objects.exists():
+        last_register_date = PriceHistory.objects.latest('date_created').date_created
+
+    return {
+        'shopsCount': Shop.objects.count(),
+        'productsCount': Product.objects.count(),
+        'pricesCount': PriceHistory.objects.count(),
+        'LastRegisterDate': last_register_date,
+    }

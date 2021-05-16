@@ -1,4 +1,5 @@
 {% extends 'product/base.html' %}
+{% load l10n %}
 {% load static %}
 
 {% block styles %}
@@ -22,110 +23,112 @@
         <div class="columns has-text-centered mb-5">
             <div class="column is-12">
 
-                <h1 class="title">Historial de precios de Tiendas Paraguayas</h1>
-                <h1 class="subtitle">{{ productsCount }} productos registrados desde el {{ sinceDate.year }}</h1>
+                <p class="title is-2">Historial de precios de Tiendas Paraguayas</p>
+                <p class="subtitle is-5 mb-0">{{ statistics.shopsCount }} Tiendas </p>
+                <p class="subtitle is-5 mb-0">{{ statistics.productsCount }} Productos </p>
+                <p class="subtitle is-5 mb-0">{{ statistics.pricesCount }} Precios Registrados</p>
+                <p class="subtitle is-5 mb-0">
+                    Fecha ultimo registro:
+                    {{ statistics.LastRegisterDate | date:"d/m/Y" }}
+                </p>
+
             </div>
         </div>
 
         <!-- < Search Form > -->
-        <div class="columns">
-            <div class="column"></div>
-
-            <form method="get" action="" id="search-form" class="box column is-three-fifths">
-                <div class="columns">
-                    <div class="column"></div>
+        <div class="columns is-centered">
+            <form method="get" action="" id="search-form" class="box column is-half">
+                <div class="">
                     <div class="column is-four-fifths">
-
                         <div class="field">
-                            <label class="label">Nombre</label>
+                            <label class="label">Nombre del producto</label>
                             <div class="control">{{ myFilter.form.name }}</div>
                         </div>
 
-                        <div class="field">
-                            <label class="label">URL</label>
-                            <div class="control">{{ myFilter.form.url }}</div>
-                        </div>
+                        {#                        <div class="field">#}
+                        {#                            <label class="label">URL de la pagina del producto</label>#}
+                        {#                            <div class="control">{{ myFilter.form.url }}</div>#}
+                        {#                        </div>#}
 
                         <div class="field">
                             <label class="label">Codigo de Barras</label>
                             <div class="control">{{ myFilter.form.barcode }}</div>
                         </div>
 
-                        <div class="field is-horizontal">
-                            <div class="field-body">
+                        <div class="field">
+                            <label class="label">Marca</label>
+                            <div class="select">{{ myFilter.form.brand }}</div>
+                        </div>
 
-                                <div class="field">
-                                    <label class="label">Tienda</label>
-                                    <div class="control">
-                                        <div class="select">{{ myFilter.form.shop }}</div>
-                                    </div>
-                                </div>
-
-                                <div class="field">
-                                    <label class="label">Marca</label>
-                                    <div class="control">
-                                        <div class="select">{{ myFilter.form.brand }}</div>
-                                    </div>
-                                </div>
-
-                            </div>
+                        <div class="field">
+                            <label class="label">Tienda</label>
+                            <div class="select">{{ myFilter.form.shop }}</div>
                         </div>
 
                         <div class="field is-grouped is-grouped-centered mt-6">
                             <div class="control">
-                                <button type="submit" class="button is-info">Buscar</button>
+                                <button type="submit" class="button is-link">Buscar Productos</button>
                             </div>
                         </div>
-
                     </div>
-                    <div class="column"></div>
                 </div>
             </form>
-            <div class="column"></div>
         </div>
         <!-- </ Search Form > -->
 
         <!-- < Results Table > -->
         {% if products %}
-            <div class="box">
-
+            <div>
                 <table class="table is-striped">
                     <thead>
                     <tr>
-                        <th class="has-text-centered">Codigo de Barras</th>
+                        <th class="has-text-centered">
+                            Comparar
+                            <form id="go-to-compare-page-form" action="{% url 'chart' %}">
+                                <button id="comparison-button" type="submit"
+                                        class="button is-primary is-hidden" title="Disabled button">
+                                    Ver Comparacion
+                                </button>
+                            </form>
+                        </th>
                         <th class="has-text-centered">Nombre</th>
+                        <th class="has-text-centered">Codigo de Barras</th>
                         <th class="has-text-centered">Tienda</th>
                         <th class="has-text-centered">Marca</th>
+                        <th class="has-text-centered">Precio</th>
                         <th class="has-text-centered">URL</th>
-                        <th class="sortable" sortable="num_prices">Historial de Precio</th>
+                        <th class="sortable" sortable="num_prices">Historial</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for product in products %}
                         <tr>
-                            <td class="has-text-centered">{{ product.barcode|default_if_none:"-" }}</td>
+                            <td class="has-text-centered">
+                                <label>
+                                    <input type="checkbox" form="go-to-compare-page-form" name="product_id"
+                                           value="{{ product.id | unlocalize }}" onclick="toggleShowComparisonButton()"/>
+                                </label>
+                            </td>
                             <td>{{ product.name }}</td>
+                            <td class="has-text-centered">{{ product.barcode|default_if_none:"-" }}</td>
                             <td class="has-text-centered">{{ product.shop.name }}</td>
                             <td class="has-text-centered">
                                 {% if product.brand %} {{ product.brand.name }} {% else %}-{% endif %}
                             </td>
-
+                            <td class="has-text-centered">{{ product.pricehistory_set.last.price }}</td>
                             <td>
-                                <a class="button button is-link"
+                                <a class="button is-info is-small is-inverted"
                                    href="{{ product.url }}" target="_blank">
-                                    <span class="icon is-small"><i class="fas fa-external-link-alt"></i></span>
+                                    URL
                                 </a>
                             </td>
-
-
                             <td class="has-text-centered">
-                                <a class="button button is-primary"
-                                   href="{% url 'chart' %}?product_id={{ product.id }}">
-                                    <span>{{ product.num_prices }}</span>
+                                <a class="button is-primary "
+                                   href="{% url 'chart' %}?product_id={{ product.id | unlocalize }}">
+                                    <span>Ver historial ({{ product.num_prices }})</span>
                                     <span class="icon is-small"><i class="fas fa-chart-line"></i></span>
                                 </a>
                             </td>
-
                         </tr>
                     {% endfor %}
                     </tbody>
