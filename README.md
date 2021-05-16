@@ -77,7 +77,6 @@ Any help or feedback is appreciated, especially for the design of the site.
 
 - General improve of site design
 - Add more shops
-- Add a way to select more than one product to show chart history, the backend is already prepared for this
 
 ## License
 
