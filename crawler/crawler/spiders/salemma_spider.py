@@ -10,7 +10,7 @@ class SalemmaSpider(scrapy.Spider):
     start_urls = ['https://salemmaonline.com.py/buscar?q=%']
 
     custom_settings = {
-        'SHOP_NAME': 'salemma',
+        'SHOP_NAME': 'Salemma',
         'SHOP_URL': 'https://salemmaonline.com.py/',
     }
 

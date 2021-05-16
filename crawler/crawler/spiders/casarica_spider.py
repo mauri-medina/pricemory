@@ -11,7 +11,7 @@ class CasaRicaSpider(scrapy.Spider):
     start_urls = ['https://www.casarica.com.py/productos?q=']
 
     custom_settings = {
-        'SHOP_NAME': 'casarica',
+        'SHOP_NAME': 'Casa Rica',
         'SHOP_URL': 'https://www.casarica.com.py/',
     }
 

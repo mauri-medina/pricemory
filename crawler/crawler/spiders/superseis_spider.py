@@ -11,7 +11,7 @@ class SuperseisSpider(scrapy.Spider):
     start_urls = ['http://superseis.com.py/']
 
     custom_settings = {
-        'SHOP_NAME': 'superseis',
+        'SHOP_NAME': 'Superseis',
         'SHOP_URL': start_urls[0],
     }
 
