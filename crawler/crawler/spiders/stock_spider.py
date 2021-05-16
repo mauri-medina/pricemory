@@ -9,7 +9,7 @@ class StockSpiderSpider(scrapy.Spider):
     start_urls = ['https://www.stock.com.py/']
 
     custom_settings = {
-        'SHOP_NAME': 'stock',
+        'SHOP_NAME': 'Stock',
         'SHOP_URL': start_urls[0],
     }
 
@@ -40,30 +40,29 @@ class StockSpiderSpider(scrapy.Spider):
         # Some products redirects (http code: 301) to this page
         if 'gana.stock.com.py' in response.url:
             self.logger.warning('Ignoring url: %s', response.url)
-            yield None
+        else:
+            items = ProductItem()
 
-        items = ProductItem()
+            name = response.css('.productname::text').get()
+            if name:
+                items['name'] = name.strip()
 
-        name = response.css('.productname::text').get()
-        if name:
-            items['name'] = name.strip()
+            barcode = response.css('.sku::text').get()
+            if barcode:
+                items['barcode'] = barcode.strip().split(':')[1]
 
-        barcode = response.css('.sku::text').get()
-        if barcode:
-            items['barcode'] = barcode.strip().split(':')[1]
+            price = response.css('.productPrice::text').get()
+            if price:
+                price = price.replace('.', '')
+                price = price.strip()
 
-        price = response.css('.productPrice::text').get()
-        if price:
-            price = price.replace('.', '')
-            price = price.strip()
+                items['price'] = int(price)
 
-            items['price'] = int(price)
+            brand = response.css('.manufacturers a::text').get()
+            if brand:
+                items['brand'] = brand.strip()
 
-        brand = response.css('.manufacturers a::text').get()
-        if brand:
-            items['brand'] = brand.strip()
+            items['image_url'] = response.css('#img-slider img::attr(src)').get()
+            items['url'] = response.request.url
 
-        items['image_url'] = response.css('#img-slider img::attr(src)').get()
-        items['url'] = response.request.url
-
-        yield items
+            yield items
