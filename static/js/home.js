@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    toggleShowComparisonButton();
+
     // -----------------------------------------------
     // Sortable table columns
     // -----------------------------------------------
