@@ -106,7 +106,8 @@
                             <td class="has-text-centered">
                                 <label>
                                     <input type="checkbox" form="go-to-compare-page-form" name="product_id"
-                                           value="{{ product.id | unlocalize }}" onclick="toggleShowComparisonButton()"/>
+                                           value="{{ product.id | unlocalize }}"
+                                           onclick="toggleShowComparisonButton()"/>
                                 </label>
                             </td>
                             <td>{{ product.name }}</td>
@@ -136,67 +137,71 @@
 
                 <!--Pagination -->
                 <!-- Adapted from https://www.ordinarycoders.com/blog/article/django-pagination -->
-                <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
-                    <ul class="pagination-list">
-                        <a class="pagination-link"
-                                {% if products.has_previous %}
-                           href="?{{ parameters }}&page={{ products.previous_page_number }}"
-                                {% else %}
-                           title="This is the first page" disabled
-                                {% endif %}
-                        >
-                            Anterior
-                        </a>
 
-                        {% if products.number|add:'-2' > 1 %}
-                            <li><a class="pagination-link" aria-label="Goto page 1"
-                                   href="?page=1&{{ parameters }}">1</a>
-                            </li>
-                            <li><a class="pagination-ellipsis"
-                                   href="?{{ parameters }}&page={{ products.number|add:'-3' }}">&hellip;</a>
-                            </li>
-                        {% endif %}
+                {#  Avoid thousand separator in page links #}
+                {% localize off %}
+                    <nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
+                        <ul class="pagination-list">
+                            <a class="pagination-link"
+                                    {% if products.has_previous %}
+                               href="?{{ parameters }}&page={{ products.previous_page_number }}"
+                                    {% else %}
+                               title="This is the first page" disabled
+                                    {% endif %}
+                            >
+                                Anterior
+                            </a>
 
-
-                        {% for page in products.paginator.page_range %}
-                            {% if products.number == page %}
-                                <li><a class="pagination-link is-current" aria-label="Page {{ page }}"
-                                       aria-current="page">{{ page }}</a></li>
-                            {% elif page > products.number|add:'-3' and page < products.number|add:'3' %}
-                                <li><a class="pagination-link" aria-label="Goto page {{ page }}"
-                                       href="?{{ parameters }}&page={{ page }}">{{ page }}</a></li>
+                            {% if products.number|add:'-2' > 1 %}
+                                <li><a class="pagination-link" aria-label="Goto page 1"
+                                       href="?page=1&{{ parameters }}">1</a>
+                                </li>
+                                <li><a class="pagination-ellipsis"
+                                       href="?{{ parameters }}&page={{ products.number|add:'-3' }}">&hellip;</a>
+                                </li>
                             {% endif %}
-                        {% endfor %}
 
 
-                        {% if products.paginator.num_pages > products.number|add:'2' %}
-                            <li><a class="pagination-ellipsis"
-                                   href="?{{ parameters }}&page={{ products.number|add:'3' }}">&hellip;</a>
-                            </li>
-
-
-                            <li>
-                                <a class="pagination-link" aria-label="Goto page 1"
-                                   href="?{{ parameters }}&page={{ products.paginator.num_pages }}"
-                                >
-                                    {{ products.paginator.num_pages }}
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        <a class="pagination-link"
-                                {% if products.has_next %}
-                           href="?{{ parameters }}&page={{ products.next_page_number }}"
-                                {% else %}
-                           title="This is the last page" disabled
+                            {% for page in products.paginator.page_range %}
+                                {% if products.number == page %}
+                                    <li><a class="pagination-link is-current" aria-label="Page {{ page }}"
+                                           aria-current="page">{{ page }}</a></li>
+                                {% elif page > products.number|add:'-3' and page < products.number|add:'3' %}
+                                    <li><a class="pagination-link" aria-label="Goto page {{ page }}"
+                                           href="?{{ parameters }}&page={{ page }}">{{ page }}</a></li>
                                 {% endif %}
-                        >
-                            Siguiente
-                        </a>
+                            {% endfor %}
 
-                    </ul>
-                </nav>
-                <!--end of Pagination-->
+
+                            {% if products.paginator.num_pages > products.number|add:'2' %}
+                                <li><a class="pagination-ellipsis"
+                                       href="?{{ parameters }}&page={{ products.number|add:'3' }}">&hellip;</a>
+                                </li>
+
+
+                                <li>
+                                    <a class="pagination-link" aria-label="Goto page 1"
+                                       href="?{{ parameters }}&page={{ products.paginator.num_pages }}"
+                                    >
+                                        {{ products.paginator.num_pages }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <a class="pagination-link"
+                                    {% if products.has_next %}
+                               href="?{{ parameters }}&page={{ products.next_page_number }}"
+                                    {% else %}
+                               title="This is the last page" disabled
+                                    {% endif %}
+                            >
+                                Siguiente
+                            </a>
+
+                        </ul>
+                    </nav>
+                    <!--end of Pagination-->
+                {% endlocalize %}
             </div>
             <!-- </ Results Table > -->
         {% endif %}
