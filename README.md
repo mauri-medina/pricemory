@@ -56,7 +56,7 @@ This will save the scrapped data to the database, to save in another formats
 check [scrappy](https://docs.scrapy.org/en/latest/index.html) documentation
 
 ### Run all the spiders
-`python crawler_runner`
+`python crawler_runner.py`
 <br>
 <br>
 The script [crawler_runner](crawler/crawler_runner.py) by default will run the
@@ -66,7 +66,7 @@ The runner output is logged in the file defined in the script
 
 ### Run django
 
-`./manage.py runserver`
+`python manage.py runserver 0.0.0.0:8000`
 
 ## Contributing
 
