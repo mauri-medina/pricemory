@@ -18,6 +18,7 @@ It uses scrapy for scraping shops sites and django for web framework
 ## Requirements
 
 - Python 3.6+
+- PIP  
 - Django 2.2+
 - PostgreSQL 12+
 
@@ -32,7 +33,7 @@ python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-./manage.py migrate
+python manage.py runserver 0.0.0.0:8000
 
 ```
 
