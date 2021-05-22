@@ -27,7 +27,7 @@ It uses scrapy for scraping shops sites and django for web framework
 1. Clone and install project
 
 ```
-git clone git@github.com:mauri-medina/pricemory.git
+git clone https://github.com/mauri-medina/pricemory.git
 cd pricemory
 python3 -m venv env
 source env/bin/activate
