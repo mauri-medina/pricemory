@@ -31,7 +31,7 @@
                 return response.map((product, index) => {
                     let color = chartColors[index % chartColors.length]
                     return {
-                        label: product.name,
+                        label: product.name + ' (' + product.shop.name + ')',
                         borderColor: color,
                         backgroundColor: color,
                         fill: false,
@@ -93,8 +93,7 @@
                                 callbacks: {
                                     // Show product name with price when hover over data point
                                     label: function (tooltipItems, dataset) {
-                                        console.log(tooltipItems)
-                                        return dataset.datasets[0].label + ": " + addThousandSeparator(tooltipItems.yLabel);
+                                        return dataset.datasets[tooltipItems.datasetIndex].label + ": " + addThousandSeparator(tooltipItems.yLabel);
                                     }
                                 }
                             },
