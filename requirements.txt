@@ -1,5 +1,5 @@
 Scrapy==2.4.1
-Django==3.1.7
+Django==3.1.12
 itemadapter==0.2.0
 Twisted==21.2.0
 django-filter==2.4.0
