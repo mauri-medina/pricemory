@@ -82,7 +82,7 @@ Any help or feedback is appreciated, especially for the design of the site.
 ## Contributors / Thanks
 
 - Bruno Ostertag https://github.com/bostertag : Database cleanup and optimization
--
+
 ## License
 
 This project is licensed under the terms of the GNU General Public License v3.0
