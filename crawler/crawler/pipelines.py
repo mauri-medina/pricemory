@@ -8,11 +8,32 @@
 from scrapy.exceptions import DropItem
 
 from product.models import *
+from itemadapter import ItemAdapter
 
 
 class CrawlerPipeline:
     def process_item(self, item, spider):
         return item
+
+
+class RemoveUrlProtocolPipeline:
+    def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+
+        # remove url protocol to avoid product duplication when a site pass from http: to https:
+        adapter['url'] = self.remove_protocol(adapter.get('url'))
+        adapter['image_url'] = self.remove_protocol(adapter.get('image_url'))
+        return item
+
+    def remove_protocol(self, url: str) -> str:
+        # a url can be http://example.com,
+        # Dont remove '//' part because it tells the browser that this is actually a new (full) link
+        protocols = ['http:', 'https:']
+        if url:
+            for protocol in protocols:
+                if protocol in url:
+                    url = url.replace(protocol, '')
+        return url
 
 
 class DataBasePipeline:

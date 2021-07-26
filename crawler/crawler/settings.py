@@ -83,7 +83,8 @@ RETRY_TIMES = 3
 CONCURRENT_ITEMS = 200
 ITEM_PIPELINES = {
     # 'crawler.pipelines.crawlerPipeline': 300,
-    'crawler.pipelines.DataBasePipeline': 300,
+    'crawler.pipelines.RemoveUrlProtocolPipeline': 300,
+    'crawler.pipelines.DataBasePipeline': 800,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
