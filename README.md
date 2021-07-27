@@ -74,6 +74,12 @@ Pull requests are welcome.
 
 Any help or feedback is appreciated, especially for the design of the site.
 
+- Fork it!
+- Create your feature branch: git checkout -b my-new-feature
+- Commit your changes: git commit -am 'Add some feature'
+- Push to the branch: git push origin my-new-feature
+- Submit a pull request :D
+
 ## TODO
 
 - General improve of site design
@@ -81,7 +87,7 @@ Any help or feedback is appreciated, especially for the design of the site.
 
 ## Contributors / Thanks
 
-- Bruno Ostertag https://github.com/bostertag : Database cleanup and optimization
+- Bruno Ostertag https://github.com/bostertag : Database cleanup and sql performance tuning.
 
 ## License
 
