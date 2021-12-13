@@ -43,6 +43,12 @@ python manage.py runserver 0.0.0.0:8000
 
 ## Usage
 
+### Run django
+
+`python manage.py runserver 0.0.0.0:8000`
+
+There is a [database](resources/db.zip) that can be used for testing
+
 ### Run spider
 
 In crawler directory run:
@@ -63,10 +69,6 @@ The script [crawler_runner](crawler/crawler_runner.py) by default will run the
 spiders sequentially, one spider after another, but other options are available in the script.
 
 The runner output is logged in the file defined in the script
-
-### Run django
-
-`python manage.py runserver 0.0.0.0:8000`
 
 ## Contributing
 
