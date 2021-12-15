@@ -26,7 +26,7 @@ It uses scrapy for scraping shops sites and django for web framework
 
 1. Clone and install project
 
-```
+```bash
 git clone https://github.com/mauri-medina/pricemory.git
 cd pricemory
 python3 -m venv env
@@ -53,22 +53,33 @@ There is a [database](resources/db.zip) that can be used for testing
 
 In crawler directory run:
 <br>
-`scrapy crawl spider-name`
+```bash
+scrapy crawl spider-name
+```
 
 The spider names are specified in their files, for example to run the spider from super seis:<br>
-`scrapy crawl superseis_spider`
+```bash
+scrapy crawl superseis_spider
+```
 
 This will save the scrapped data to the database, to save in another formats
 check [scrappy](https://docs.scrapy.org/en/latest/index.html) documentation
 
 ### Run all the spiders
-`python crawler_runner.py`
-<br>
+```bash
+python crawler_runner.py
+```
 <br>
 The script [crawler_runner](crawler/crawler_runner.py) by default will run the
 spiders sequentially, one spider after another, but other options are available in the script.
 
 The runner output is logged in the file defined in the script
+
+### Run django
+
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
 
 ## Contributing
 
@@ -89,7 +100,8 @@ Any help or feedback is appreciated, especially for the design of the site.
 
 ## Contributors / Thanks
 
-- Bruno Ostertag https://github.com/bostertag : Database cleanup and sql performance tuning.
+- [Bruno Ostertag](https://github.com/bostertag) : Database cleanup and sql performance tuning.
+- [Saúl Zalimben](https://github.com/zalimben)
 
 ## License
 

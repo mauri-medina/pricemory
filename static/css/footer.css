@@ -3,9 +3,6 @@
 }
 
 .footer {
-    padding: 0.3rem;
-    margin-bottom:  0;
-    position: absolute;
     left: 0;
     bottom: 0;
     height: 100px;
@@ -14,7 +11,6 @@
 }
 
 .footer-github {
-  position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
@@ -57,7 +53,7 @@
 #github-logo {
   fill:#151513;
   color:#fff;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   border: 0;
   right: 0;
