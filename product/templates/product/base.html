@@ -1,3 +1,6 @@
+{% load l10n %}
+{% load static %}
+
 <!DOCTYPE html>
 
 {# TODO move color to style#}
@@ -19,26 +22,29 @@
 
     {% endblock %}
 
-    {% block styles %}
-
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'css/home.css' %}">
+        <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     {% endblock %}
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/cart.png' %}">
+
     <title>Pricemory</title>
 </head>
 
 <body>
+    {% include 'product/header.html' %}
 
-{% include 'product/header.html' %}
+    {% block content %}
 
-{% block content %}
+    {% endblock %}
 
-{% endblock %}
+    <hr class="separator">
+    {% include 'product/footer.html' %}
 
-{% include 'product/footer.html' %}
+    </div>
+    {#  SCRIPTS #}
+    {% block scripts %}
 
-{#  SCRIPTS #}
-{% block scripts %}
-
-{% endblock %}
-
+    {% endblock %}
 </body>
 </html>
