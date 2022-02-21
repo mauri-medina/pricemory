@@ -7,11 +7,11 @@ import re
 
 class NisseiSpider(scrapy.Spider):
     name = 'nissei_spider'
-    allowed_domains = ['www.casanissei.com']
-    start_urls = ['https://www.casanissei.com/py/catalogsearch/result/index/?q=%']
+    allowed_domains = ['nissei.com']
+    start_urls = ['https://nissei.com/py/catalogsearch/result/index/?q=%25']
 
     custom_settings = {
-        'SHOP_NAME': 'Casa Nissei',
+        'SHOP_NAME': 'Nissei',
         'SHOP_URL': 'https://www.casanissei.com/py/',
     }
 
